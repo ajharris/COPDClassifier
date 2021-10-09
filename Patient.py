@@ -41,7 +41,5 @@ class Patient:
         destination = destination + '/' + category + '/' + str(self._number)
         if not os.path.exists(destination):
             os.makedirs(destination)
-        #for folder in self._subfolders:
-            # os.makedirs(destination + '/' + folder)
         copy_tree(self._dicomFolder, destination)
 
