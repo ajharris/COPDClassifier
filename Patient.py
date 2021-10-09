@@ -1,3 +1,5 @@
+from distutils.dir_util import copy_tree
+
 import pydicom
 import os
 
@@ -18,6 +20,9 @@ class Patient:
     def isReady(self):
         return self._hasDirectoryTree
 
+    def getCOPDStatus(self):
+        return self._COPD
+
     def addDicomFolder(self, folder):
         self._dicomFolder=folder
 
@@ -31,5 +36,12 @@ class Patient:
     def getNumber(self):
         return str(self._number)
 
-    # def loadImageSets(self):
+    def copyFolders(self, destination):
+        category = 'COPD' if self.getCOPDStatus() else 'NCOPD'
+        destination = destination + '/' + category + '/' + str(self._number)
+        if not os.path.exists(destination):
+            os.makedirs(destination)
+        #for folder in self._subfolders:
+            # os.makedirs(destination + '/' + folder)
+        copy_tree(self._dicomFolder, destination)
 

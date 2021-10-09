@@ -43,6 +43,12 @@ def cleanUpPatientList():
             listOfnonBlankPatients.append(patient)
     return listOfnonBlankPatients
 
+def makeSortedFolders(path):
+    # Make folders for separated patient scans to be deposited
+    not os.path.exists(path + '/COPD') and os.mkdir(path + '/COPD')
+    not os.path.exists(path + '/NCOPD') and os.mkdir(path + '/NCOPD')
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Set the paths for the location of the Excel data sheet and the CAT scan dicom data
@@ -62,6 +68,12 @@ if __name__ == '__main__':
     assignPatientDataPaths()
     patients = cleanUpPatientList()
 
+    # create divided folders, copy patient data to appropriate location
+    makeSortedFolders(dataPath)
+    patientsNotCopd = 0
+    print(patients)
+    for patient in patients:
+        patient.copyFolders(dataPath)
 
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
