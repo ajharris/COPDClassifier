@@ -5,6 +5,10 @@ CopdClassifier - Adapted 10/8/2021 by andrew.harris@ryerson.ca
 
 Code will look along the path given for a .xlsx file, and use that to inform the organization of the images by patient
 
+Image folders will be copied to folders for COPD or Non-COPD patients
+
+To run from the command line, use python main.py <path to excel file/destination folder> <path to images source folder>
+
 '''
 import os
 import sys
