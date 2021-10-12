@@ -1,6 +1,5 @@
 from distutils.dir_util import copy_tree
 
-import pydicom
 import os
 
 class Patient:
@@ -41,5 +40,9 @@ class Patient:
         destination = destination + '/' + category + '/' + str(self._number)
         if not os.path.exists(destination):
             os.makedirs(destination)
-        copy_tree(self._dicomFolder, destination)
+        try:
+            copy_tree(self._dicomFolder, destination)
+        except FileNotFoundError:
+            print(destination)
+
 

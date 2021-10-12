@@ -7,6 +7,7 @@ Code will look along the path given for a .xlsx file, and use that to inform the
 
 '''
 import os
+import sys
 
 import pandas as pd
 from Patient import Patient
@@ -53,12 +54,16 @@ def makeSortedFolders(path):
 if __name__ == '__main__':
     # Set the paths for the location of the Excel data sheet and the CAT scan dicom data
     # Pass -O to Python if path input is required
-    if __debug__:
-        dataPath = '/Volumes/GoogleDrive/My Drive/KirbyLab/SaraProjectFolder/data_1/data_1'
-        dicomFolder = '/Volumes/GoogleDrive/My Drive/KirbyLab/SaraProjectFolder/copd'
+    if len(sys.argv) > 1:
+        dataPath = sys.argv[0]
+        dicomFolder = sys.argv[1]
     else:
-        dataPath = input('Provide the path to study data: ')
-        dicomFolder = input('Provide the path to DICOM data')
+        if __debug__:
+            dataPath = '/Volumes/GoogleDrive/My Drive/KirbyLab/SaraProjectFolder/SortedData'
+            dicomFolder = '/Volumes/GoogleDrive/My Drive/KirbyLab/SaraProjectFolder/copd'
+        else:
+            dataPath = input('Provide the path to study data: ')
+            dicomFolder = input('Provide the path to DICOM data')
 
     # subdivide the list of patients into COPD and NON-COPD classifications
     data = getStudyData(dataPath)
@@ -70,8 +75,7 @@ if __name__ == '__main__':
 
     # create divided folders, copy patient data to appropriate location
     makeSortedFolders(dataPath)
-    patientsNotCopd = 0
-    print(patients)
+
     for patient in patients:
         patient.copyFolders(dataPath)
 
