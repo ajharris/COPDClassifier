@@ -5,7 +5,12 @@ CopdClassifier - Adapted 10/8/2021 by andrew.harris@ryerson.ca
 
 Code will look along the path given for a .xlsx file, and use that to inform the organization of the images by patient
 
+Image folders will be copied to folders for COPD or Non-COPD patients
+
+To run from the command line, use python main.py <path to excel file/destination folder> <path to images source folder>
+
 '''
+import concurrent.futures
 import os
 import sys
 
@@ -55,32 +60,36 @@ def makeSortedFolders(path):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Set the paths for the location of the Excel data sheet and the CAT scan dicom data
-    # Pass -O to Python if path input is required
     if len(sys.argv) > 1:
         dataPath = sys.argv[0]
         dicomFolder = sys.argv[1]
     else:
         if __debug__:
-            dataPath = '/Volumes/GoogleDrive/My Drive/KirbyLab/SaraProjectFolder/SortedData'
-            dicomFolder = '/Volumes/GoogleDrive/My Drive/KirbyLab/SaraProjectFolder/copd'
+            dataPath = r'\\fs2.physics.ryerson.ca\a28harri\Documents\SortedDicoms'
+            dicomFolder = r'R:\kirby_group\CanCOLD\Dicoms'
         else:
             dataPath = input('Provide the path to study data: ')
-            dicomFolder = input('Provide the path to DICOM data')
+            dicomFolder = input('Provide the path to DICOM images: ')
 
     # subdivide the list of patients into COPD and NON-COPD classifications
+    print("Sorting records.")
     data = getStudyData(dataPath)
     patients = listPatients(pd.DataFrame(data, columns=['Subjectid', 'Study_group_GLI']))
 
     # match patient numbers with the path to their data, remove patients with no current images
+    print("Removing empty records.")
     assignPatientDataPaths()
     patients = cleanUpPatientList()
 
     # create divided folders, copy patient data to appropriate location
+    print("Creating sorted folders")
     makeSortedFolders(dataPath)
 
+    print("Copying patient folders.")
+    # executor = concurrent.futures.ProcessPoolExecutor(25)
+    # futures = [executor.submit(patient.copyFolders, patient) for patient in patients]
+    # concurrent.futures.wait(futures)
     for patient in patients:
         patient.copyFolders(dataPath)
-
-
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 
