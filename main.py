@@ -56,17 +56,21 @@ def makeSortedFolders(path):
     not os.path.exists(path + '/COPD') and os.mkdir(path + '/COPD')
     not os.path.exists(path + '/NCOPD') and os.mkdir(path + '/NCOPD')
 
+def callCopyFolders(patient):
+    return patient.copyFolders()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Set the paths for the location of the Excel data sheet and the CAT scan dicom data
     if len(sys.argv) > 1:
-        dataPath = sys.argv[0]
-        dicomFolder = sys.argv[1]
+        dataPath        =   (sys.argv[1])
+        dicomFolder     =   (sys.argv[2])
+        print(sys.argv[1])
+        print(sys.argv[2])
     else:
         if __debug__:
-            dataPath = r'\\fs2.physics.ryerson.ca\a28harri\Documents\SortedDicoms'
-            dicomFolder = r'R:\kirby_group\CanCOLD\Dicoms'
+            dataPath = r'/Volumes/STORAGE/DicomScrap'
+            dicomFolder = r'/Volumes/STORAGE/DicomScrap/dicoms'
         else:
             dataPath = input('Provide the path to study data: ')
             dicomFolder = input('Provide the path to DICOM images: ')
@@ -86,10 +90,12 @@ if __name__ == '__main__':
     makeSortedFolders(dataPath)
 
     print("Copying patient folders.")
-    # executor = concurrent.futures.ProcessPoolExecutor(25)
-    # futures = [executor.submit(patient.copyFolders, patient) for patient in patients]
+    # executor = concurrent.futures.ProcessPoolExecutor()
+    # futures = [executor.submit(callCopyFolders, patient) for patient in patients]
     # concurrent.futures.wait(futures)
+
     for patient in patients:
         patient.copyFolders(dataPath)
+    print("Complete")
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 
