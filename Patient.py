@@ -42,7 +42,7 @@ class Patient:
             os.makedirs(destination)
         try:
             copy_tree(self._dicomFolder, destination)
-        except FileNotFoundError:
-            print(destination)
+        except:
+            print("Error with: " + self._number)
 
 
