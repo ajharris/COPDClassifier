@@ -30,6 +30,8 @@ def listPatients(data):
         p = Patient(number, False) if data.loc[i].at['Study_group_GLI'] < 3 else Patient(number)
         patients.append(p)
 
+    return patients
+
 def assignPatientDataPaths():
     for folder, subfolders, filename in os.walk(dicomFolder):
         for patient in range(0, len(patients)):
@@ -67,7 +69,7 @@ if __name__ == '__main__':
 
     # subdivide the list of patients into COPD and NON-COPD classifications
     data = getStudyData(dataPath)
-    listPatients(pd.DataFrame(data, columns=['Subjectid', 'Study_group_GLI']))
+    patients = listPatients(pd.DataFrame(data, columns=['Subjectid', 'Study_group_GLI']))
 
     # match patient numbers with the path to their data, remove patients with no current images
     assignPatientDataPaths()
