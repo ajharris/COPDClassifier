@@ -73,8 +73,8 @@ if __name__ == '__main__':
                 dataPath = "R:\\kirby_group\\CanCOLD\\SortedDicoms\\"
                 dicomFolder ="R\\kirby_group\\CanCOLD\\Dicoms\\"
             elif os.name == 'posix':
-                dataPath = "MacPath"
-                dicomFolder = "MacFolder"
+                dataPath = "/Volumes/STORAGE/DicomScrap"
+                dicomFolder = "/Volumes/STORAGE/DicomScrap/dicoms"
         else:
             dataPath = input('Provide the path to study data: ')
             dicomFolder = input('Provide the path to DICOM images: ')
