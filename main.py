@@ -9,6 +9,8 @@ Image folders will be copied to folders for COPD or Non-COPD patients
 
 To run from the command line, use python main.py <path to excel file/destination folder> <path to images source folder>
 
+If the paths are on the same drive, the program works near instantly
+
 '''
 import concurrent.futures
 import os
