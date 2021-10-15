@@ -65,37 +65,26 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         dataPath        =   (sys.argv[1])
         dicomFolder     =   (sys.argv[2])
-        print(sys.argv[1])
-        print(sys.argv[2])
     else:
         if __debug__:
-            dataPath = r'/Volumes/STORAGE/DicomScrap'
-            dicomFolder = r'/Volumes/STORAGE/DicomScrap/dicoms'
+            dataPath = "R:\\kirby_group\\CanCOLD\\SortedDicoms\\"
+            dicomFolder ="R\\kirby_group\\CanCOLD\\Dicoms\\"
         else:
             dataPath = input('Provide the path to study data: ')
             dicomFolder = input('Provide the path to DICOM images: ')
 
     # subdivide the list of patients into COPD and NON-COPD classifications
-    print("Sorting records.")
     data = getStudyData(dataPath)
     patients = listPatients(pd.DataFrame(data, columns=['Subjectid', 'Study_group_GLI']))
 
     # match patient numbers with the path to their data, remove patients with no current images
-    print("Removing empty records.")
     assignPatientDataPaths()
     patients = cleanUpPatientList()
 
     # create divided folders, copy patient data to appropriate location
-    print("Creating sorted folders")
     makeSortedFolders(dataPath)
-
-    print("Copying patient folders.")
-    # executor = concurrent.futures.ProcessPoolExecutor()
-    # futures = [executor.submit(callCopyFolders, patient) for patient in patients]
-    # concurrent.futures.wait(futures)
 
     for patient in patients:
         patient.copyFolders(dataPath)
-    print("Complete")
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 
