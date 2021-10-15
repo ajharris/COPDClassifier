@@ -69,8 +69,12 @@ if __name__ == '__main__':
         dicomFolder     =   (sys.argv[2])
     else:
         if __debug__:
-            dataPath = "R:\\kirby_group\\CanCOLD\\SortedDicoms\\"
-            dicomFolder ="R\\kirby_group\\CanCOLD\\Dicoms\\"
+            if os.name == 'nt':
+                dataPath = "R:\\kirby_group\\CanCOLD\\SortedDicoms\\"
+                dicomFolder ="R\\kirby_group\\CanCOLD\\Dicoms\\"
+            elif os.name == 'posix':
+                dataPath = "MacPath"
+                dicomFolder = "MacFolder"
         else:
             dataPath = input('Provide the path to study data: ')
             dicomFolder = input('Provide the path to DICOM images: ')
