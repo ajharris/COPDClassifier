@@ -22,6 +22,7 @@ from Patient import Patient
 dataPath = ''
 dicomFolder = ''
 patients = []
+spacing = []
 
 
 def getStudyData(excelPath):
@@ -61,6 +62,11 @@ def makeSortedFolders(path):
 def callCopyFolders(patient):
     return patient.copyFolders()
 
+def updateSpacing(patient):
+    patientSpacing = patient.getSpacing()
+    for scan in patientSpacing:
+        scan not in spacing and spacing.append(scan)
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Set the paths for the location of the Excel data sheet and the CAT scan dicom data
@@ -93,5 +99,10 @@ if __name__ == '__main__':
     for patient in patients:
         patient.copyFolders(dataPath)
         patient.getDicomImages()
+        updateSpacing(patient)
+
+    print("Unique scan spacings (cm): ")
+    for set in spacing:
+        print(set)
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 

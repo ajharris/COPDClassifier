@@ -60,10 +60,16 @@ class Patient:
                         if regex.search(".*.dcm", file):# need to update filePath to be destination
                             try:
                                 importName = filePath + '/' + file
-                                print(importName)
                                 image = pydicom.dcmread(importName)
                                 listOfDicoms.append(image)
                             except FileNotFoundError:
                                 print('Not a valid dicom')
-
                     len(listOfDicoms) > 0 and self._dicoms.append(listOfDicoms)
+                self._dicoms.append(listOfDicoms)
+
+    def getSpacing(self):
+        uniqueSpacing = []
+        for dicomSeries in self._dicoms:
+            for dicom in dicomSeries:
+                dicom.PixelSpacing not in uniqueSpacing and uniqueSpacing.append(dicom.PixelSpacing)
+        return uniqueSpacing
