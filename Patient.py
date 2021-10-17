@@ -1,13 +1,16 @@
 from distutils.dir_util import copy_tree
 
 import os
+import re as regex
+import pydicom
 
 class Patient:
     _number = 0
     _COPD = True
-    _hasDirectoryTree = False
+    _hasDirectoryList = False
     _dicomFolder = ''
     _subfolders = []
+    _dicoms = []
 
     def __repr__(self):
         return 'Patient: ' + str(self._number) + ", COPD: " + str(self._COPD) + ' Number of DICOM sets: ' + str(len(self._subfolders) )
@@ -17,7 +20,7 @@ class Patient:
         self._COPD = COPD
 
     def isReady(self):
-        return self._hasDirectoryTree
+        return self._hasDirectoryList
 
     def getCOPDStatus(self):
         return self._COPD
@@ -27,7 +30,7 @@ class Patient:
 
     def setSubFolders(self, subfolders):
         self._subfolders = subfolders
-        self._hasDirectoryTree = True
+        self._hasDirectoryList = True
 
     def getSubFolders(self):
         return self._subfolders
@@ -45,4 +48,22 @@ class Patient:
         except FileNotFoundError:
             print("Error with: " + self._number)
 
+    def getDicomImages(self):
+        for root, subs, files in os.walk(self._dicomFolder):
+            for folder in subs:
+                if folder == 'dicom':
+                    continue
+                listOfDicoms = []
+                if regex.search('V*', folder):
+                    filePath = self._dicomFolder + "/" + folder + "/dicom"
+                    for file in os.listdir(filePath):
+                        if regex.search(".*.dcm", file):# need to update filePath to be destination
+                            try:
+                                importName = filePath + '/' + file
+                                print(importName)
+                                image = pydicom.dcmread(importName)
+                                listOfDicoms.append(image)
+                            except FileNotFoundError:
+                                print('Not a valid dicom')
 
+                    len(listOfDicoms) > 0 and self._dicoms.append(listOfDicoms)

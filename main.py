@@ -92,5 +92,6 @@ if __name__ == '__main__':
 
     for patient in patients:
         patient.copyFolders(dataPath)
+        patient.getDicomImages()
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 
