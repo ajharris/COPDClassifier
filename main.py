@@ -43,7 +43,7 @@ def listPatients(data):
 def assignPatientDataPaths():
     for folder, subfolders, filename in os.walk(dicomFolder):
         for patient in range(0, len(patients)):
-            if patients[patient].getNumber() in folder and not patients[patient].isReady():
+            if patients[patient].getNumber() in folder:
                 patients[patient].addDicomFolder(folder)
                 patients[patient].setSubFolders(subfolders)
 
@@ -77,7 +77,7 @@ if __name__ == '__main__':
         if __debug__:
             if os.name == 'nt':
                 dataPath = "R:\\kirby_group\\CanCOLD\\SortedDicoms\\"
-                dicomFolder ="R\\kirby_group\\CanCOLD\\Dicoms\\"
+                dicomFolder ="R:\\kirby_group\\CanCOLD\\Dicoms\\"
             elif os.name == 'posix':
                 dataPath = "/Volumes/STORAGE/DicomScrap"
                 dicomFolder = "/Volumes/STORAGE/DicomScrap/dicoms"
