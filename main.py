@@ -97,12 +97,15 @@ if __name__ == '__main__':
     makeSortedFolders(dataPath)
 
     for patient in patients:
-        patient.copyFolders(dataPath)
+        # patient.copyFolders(dataPath)
         patient.getDicomImages()
         updateSpacing(patient)
 
-    print("Unique scan spacings (cm): ")
-    for set in spacing:
-        print(set)
+    with open(dataPath + "/imageSpacing.csv", 'w') as file:
+        print("Unique scan spacings (cm): ")
+        file.write("Unique scan spacings (cm): ")
+        for set in spacing:
+            print(set)
+            file.write(str(set))
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 
