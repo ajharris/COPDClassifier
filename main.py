@@ -60,7 +60,7 @@ def makeSortedFolders(path):
     not os.path.exists(path + '/NCOPD') and os.mkdir(path + '/NCOPD')
 
 def callCopyFolders(patient):
-    return patient.copyFolders()
+    return patient.copyCompleteFolderStructureAll()
 
 def updateSpacing(patient):
     patientSpacing = patient.getSpacing()
@@ -97,9 +97,11 @@ if __name__ == '__main__':
     makeSortedFolders(dataPath)
 
     for patient in patients:
-        patient.copyFolders(dataPath)
+        patient.addDestinationFolder(dataPath)
+        patient.loadPatient()
+        # patient.copyCompleteFolderStructureAll(dataPath)
         patient.getDicomImages()
-        patient.storePatient()
+        # patient.storePatient()
         updateSpacing(patient)
 
     print("Unique scan spacings (cm): ")

@@ -34,7 +34,10 @@ class Patient:
         self._dicomSourceFolder = folder
 
     def addDestinationFolder(self, destinationFolder):
+        category = 'COPD' if self.getCOPDStatus() else 'NCOPD'
+        destinationFolder = destinationFolder + '/' + category + '/' + str(self._number)
         self._dicomDestinationFolder = destinationFolder
+        return True
 
     def setSubFolders(self, subfolders):
         self._subfolders = subfolders
@@ -46,10 +49,8 @@ class Patient:
     def getNumber(self):
         return str(self._number)
 
-    def copyFolders(self, destination):
-        category = 'COPD' if self.getCOPDStatus() else 'NCOPD'
-        destination = destination + '/' + category + '/' + str(self._number)
-        self.addDestinationFolder(destination)
+    def copyCompleteFolderStructureAll(self, destination):
+
         if not os.path.exists(destination):
             os.makedirs(destination)
         try:
@@ -87,3 +88,8 @@ class Patient:
         filename = self._dicomDestinationFolder + '/' + str(self._number)
         with open(filename, 'wb') as pickleFile:
             pickle.dump(self, pickleFile)
+
+    def loadPatient(self):
+        filename = self._dicomDestinationFolder + '/' + str(self._number)
+        with open(filename, 'rb') as pickleFile:
+            pickle.load(pickleFile)
