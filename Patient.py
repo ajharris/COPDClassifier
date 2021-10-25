@@ -3,6 +3,9 @@ from distutils.dir_util import copy_tree
 import os
 import re as regex
 import pydicom
+# import itk
+import pickle
+
 
 class Patient:
     _number = 0
@@ -13,7 +16,8 @@ class Patient:
     _dicoms = []
 
     def __repr__(self):
-        return 'Patient: ' + str(self._number) + ", COPD: " + str(self._COPD) + ' Number of DICOM sets: ' + str(len(self._subfolders) )
+        return 'Patient: ' + str(self._number) + ", COPD: " + str(self._COPD) + ' Number of DICOM sets: ' + str(
+            len(self._subfolders))
 
     def __init__(self, number, COPD=True):
         self._number = number
@@ -26,7 +30,7 @@ class Patient:
         return self._COPD
 
     def addDicomFolder(self, folder):
-        self._dicomFolder=folder
+        self._dicomFolder = folder
 
     def setSubFolders(self, subfolders):
         self._subfolders = subfolders
@@ -57,7 +61,7 @@ class Patient:
                 if regex.search('V*', folder):
                     filePath = self._dicomFolder + "/" + folder + "/dicom"
                     for file in os.listdir(filePath):
-                        if regex.search(".*.dcm", file):# need to update filePath to be destination
+                        if regex.search(".*.dcm", file):  # need to update filePath to be destination
                             try:
                                 importName = filePath + '/' + file
                                 image = pydicom.dcmread(importName)
@@ -73,3 +77,8 @@ class Patient:
             for dicom in dicomSeries:
                 dicom.PixelSpacing not in uniqueSpacing and uniqueSpacing.append(dicom.PixelSpacing)
         return uniqueSpacing
+
+    def storePatient(self):
+        filename = self._dicomFolder + '/' + str(self._number)
+        with open(filename, 'wb') as pickleFile:
+            pickle.dump(self, pickleFile)

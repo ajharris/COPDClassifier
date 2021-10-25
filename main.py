@@ -9,7 +9,7 @@ Image folders will be copied to folders for COPD or Non-COPD patients
 
 To run from the command line, use python main.py <path to excel file/destination folder> <path to images source folder>
 
-If the paths are on the same drive, the program works near instantly
+Place input folder and output folder on the same drive for best results.
 
 '''
 import concurrent.futures
@@ -99,6 +99,7 @@ if __name__ == '__main__':
     for patient in patients:
         patient.copyFolders(dataPath)
         patient.getDicomImages()
+        patient.storePatient()
         updateSpacing(patient)
 
     print("Unique scan spacings (cm): ")
