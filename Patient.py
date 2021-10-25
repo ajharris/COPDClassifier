@@ -11,7 +11,8 @@ class Patient:
     _number = 0
     _COPD = True
     _hasDirectoryList = False
-    _dicomFolder = ''
+    _dicomSourceFolder = ''
+    _dicomDestinationFolder = ''
     _subfolders = []
     _dicoms = []
 
@@ -30,7 +31,10 @@ class Patient:
         return self._COPD
 
     def addDicomFolder(self, folder):
-        self._dicomFolder = folder
+        self._dicomSourceFolder = folder
+
+    def addDestinationFolder(self, destinationFolder):
+        self._dicomDestinationFolder = destinationFolder
 
     def setSubFolders(self, subfolders):
         self._subfolders = subfolders
@@ -45,21 +49,22 @@ class Patient:
     def copyFolders(self, destination):
         category = 'COPD' if self.getCOPDStatus() else 'NCOPD'
         destination = destination + '/' + category + '/' + str(self._number)
+        self.addDestinationFolder(destination)
         if not os.path.exists(destination):
             os.makedirs(destination)
         try:
-            copy_tree(self._dicomFolder, destination)
+            copy_tree(self._dicomSourceFolder, destination)
         except FileNotFoundError:
             print("Error with: " + self._number)
 
     def getDicomImages(self):
-        for root, subs, files in os.walk(self._dicomFolder):
+        for root, subs, files in os.walk(self._dicomDestinationFolder):
             for folder in subs:
                 if folder == 'dicom':
                     continue
                 listOfDicoms = []
                 if regex.search('V*', folder):
-                    filePath = self._dicomFolder + "/" + folder + "/dicom"
+                    filePath = self._dicomDestinationFolder + "/" + folder + "/dicom"
                     for file in os.listdir(filePath):
                         if regex.search(".*.dcm", file):  # need to update filePath to be destination
                             try:
@@ -79,6 +84,6 @@ class Patient:
         return uniqueSpacing
 
     def storePatient(self):
-        filename = self._dicomFolder + '/' + str(self._number)
+        filename = self._dicomDestinationFolder + '/' + str(self._number)
         with open(filename, 'wb') as pickleFile:
             pickle.dump(self, pickleFile)
