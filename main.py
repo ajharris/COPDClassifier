@@ -76,8 +76,8 @@ if __name__ == '__main__':
     else:
         if __debug__:
             if os.name == 'nt':
-                dataPath = "R:\\kirby_group\\CanCOLD\\SortedDicoms\\"
-                dicomFolder ="R\\kirby_group\\CanCOLD\\Dicoms\\"
+                dataPath = r"R:\\kirby_group\\CanCOLD\\SortedDicoms\\"
+                dicomFolder = r"R:\\kirby_group\\CanCOLD\\Dicoms\\"
             elif os.name == 'posix':
                 dataPath = "/Volumes/STORAGE/DicomScrap"
                 dicomFolder = "/Volumes/STORAGE/DicomScrap/dicoms"
@@ -98,10 +98,11 @@ if __name__ == '__main__':
 
     for patient in patients:
         patient.addDestinationFolder(dataPath)
-        patient.loadPatient()
+        patient.loadSingleDicomFromSource()
+        # patient.loadPatient()
         # patient.copyCompleteFolderStructureAll(dataPath)
-        patient.getDicomImages()
-        # patient.storePatient()
+        # patient.getDicomImages()
+        patient.storePatient()
         updateSpacing(patient)
 
     print("Unique scan spacings (cm): ")

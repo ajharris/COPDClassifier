@@ -3,7 +3,7 @@ from distutils.dir_util import copy_tree
 import os
 import re as regex
 import pydicom
-# import itk
+import itk
 import pickle
 
 
@@ -37,6 +37,8 @@ class Patient:
         category = 'COPD' if self.getCOPDStatus() else 'NCOPD'
         destinationFolder = destinationFolder + '/' + category + '/' + str(self._number)
         self._dicomDestinationFolder = destinationFolder
+        if not os.path.exists(self._dicomDestinationFolder):
+            os.makedirs(self._dicomDestinationFolder)
         return True
 
     def setSubFolders(self, subfolders):
@@ -49,12 +51,11 @@ class Patient:
     def getNumber(self):
         return str(self._number)
 
-    def copyCompleteFolderStructureAll(self, destination):
-
-        if not os.path.exists(destination):
-            os.makedirs(destination)
+    def copyCompleteFolderStructureAll(self):
+        if not os.path.exists(self._dicomDestinationFolder):
+            os.makedirs(self._dicomDestinationFolder)
         try:
-            copy_tree(self._dicomSourceFolder, destination)
+            copy_tree(self._dicomSourceFolder, self._dicomDestinationFolder)
         except FileNotFoundError:
             print("Error with: " + self._number)
 
@@ -79,9 +80,8 @@ class Patient:
 
     def getSpacing(self):
         uniqueSpacing = []
-        for dicomSeries in self._dicoms:
-            for dicom in dicomSeries:
-                dicom.PixelSpacing not in uniqueSpacing and uniqueSpacing.append(dicom.PixelSpacing)
+        for dicom in self._dicoms:
+            itk.spacing(dicom) not in uniqueSpacing and uniqueSpacing.append(itk.spacing(dicom))
         return uniqueSpacing
 
     def storePatient(self):
@@ -93,3 +93,40 @@ class Patient:
         filename = self._dicomDestinationFolder + '/' + str(self._number)
         with open(filename, 'rb') as pickleFile:
             pickle.load(pickleFile)
+
+    def loadSingleDicomFromSource(self, setNumber = 0):
+        dirName = self._dicomSourceFolder + '/' + self._subfolders[setNumber] + '/dicom'
+        PixelType = itk.ctype("signed short")
+        Dimension = 3
+
+        ImageType = itk.Image[PixelType, Dimension]
+
+        namesGenerator = itk.GDCMSeriesFileNames.New()
+        namesGenerator.SetUseSeriesDetails(True)
+        namesGenerator.AddSeriesRestriction("0008|0021") #not sure what this does.
+        namesGenerator.SetGlobalWarningDisplay(False)
+        namesGenerator.SetDirectory(dirName)
+
+        seriesUID = namesGenerator.GetSeriesUIDs()
+
+        for uid in seriesUID:
+            seriesIdentifier = uid
+            fileNames = namesGenerator.GetFileNames(seriesIdentifier)
+
+            reader = itk.ImageSeriesReader[ImageType].New()
+            dicomIO = itk.GDCMImageIO.New()
+            reader.SetImageIO(dicomIO)
+            reader.SetFileNames(fileNames)
+            reader.ForceOrthogonalDirectionOff()
+
+            outFileName = os.path.join(self._dicomDestinationFolder, seriesIdentifier + ".nrrd")
+
+            writer = itk.ImageFileWriter[ImageType].New()
+            writer.SetFileName(outFileName)
+            writer.UseCompressionOn()
+            writer.SetInput(reader.GetOutput())
+            writer.Update()
+
+        image = itk.imread(self._dicomDestinationFolder + '/' + seriesUID[0] + '.nrrd')
+        self._dicoms.append(image)
+        print(image)
