@@ -109,24 +109,27 @@ class Patient:
 
         seriesUID = namesGenerator.GetSeriesUIDs()
 
-        for uid in seriesUID:
-            seriesIdentifier = uid
-            fileNames = namesGenerator.GetFileNames(seriesIdentifier)
+        try:
+            image = itk.imread(self._dicomDestinationFolder + '/' + seriesUID[0] + '.nrrd')
+        except:
+            for uid in seriesUID:
+                seriesIdentifier = uid
+                fileNames = namesGenerator.GetFileNames(seriesIdentifier)
 
-            reader = itk.ImageSeriesReader[ImageType].New()
-            dicomIO = itk.GDCMImageIO.New()
-            reader.SetImageIO(dicomIO)
-            reader.SetFileNames(fileNames)
-            reader.ForceOrthogonalDirectionOff()
+                reader = itk.ImageSeriesReader[ImageType].New()
+                dicomIO = itk.GDCMImageIO.New()
+                reader.SetImageIO(dicomIO)
+                reader.SetFileNames(fileNames)
+                reader.ForceOrthogonalDirectionOff()
 
-            outFileName = os.path.join(self._dicomDestinationFolder, seriesIdentifier + ".nrrd")
+                outFileName = os.path.join(self._dicomDestinationFolder, seriesIdentifier + ".nrrd")
 
-            writer = itk.ImageFileWriter[ImageType].New()
-            writer.SetFileName(outFileName)
-            writer.UseCompressionOn()
-            writer.SetInput(reader.GetOutput())
-            writer.Update()
+                writer = itk.ImageFileWriter[ImageType].New()
+                writer.SetFileName(outFileName)
+                writer.UseCompressionOn()
+                writer.SetInput(reader.GetOutput())
+                writer.Update()
+            image = itk.imread(self._dicomDestinationFolder + '/' + seriesUID[0] + '.nrrd')
 
-        image = itk.imread(self._dicomDestinationFolder + '/' + seriesUID[0] + '.nrrd')
         self._dicoms.append(image)
         print(image)
