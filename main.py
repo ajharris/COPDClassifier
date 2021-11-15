@@ -15,6 +15,7 @@ Place input folder and output folder on the same drive for best results.
 import concurrent.futures
 import os
 import sys
+from progress.bar import Bar
 
 import pandas as pd
 from Patient import Patient
@@ -96,12 +97,14 @@ if __name__ == '__main__':
     # create divided folders, copy patient data to appropriate location
     makeSortedFolders(dataPath)
 
-    for patient in patients:
-        patient.addDestinationFolder(dataPath)
-        patient.loadSingleDicomFromSource()
-        patient.storePatient()
-        updateSpacing(patient)
-        patient.writeNrrdToSortedFolder(dataPath)
+    with Bar('Processing...', fill='@', suffix='%(percent).1f%% - %(eta)ds') as bar:
+        for patient in patients:
+            patient.addDestinationFolder(dataPath)
+            patient.loadSingleDicomFromSource()
+            patient.storePatient()
+            updateSpacing(patient)
+            patient.writeNrrdToSortedFolder(dataPath)
+            bar.next()
 
 
 
