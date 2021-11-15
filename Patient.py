@@ -13,6 +13,7 @@ class Patient:
     _hasDirectoryList = False
     _dicomSourceFolder = ''
     _dicomDestinationFolder = ''
+    _nrrdGroupFolder = ''
     _subfolders = []
     _dicoms = []
 
@@ -132,4 +133,9 @@ class Patient:
             image = itk.imread(self._dicomDestinationFolder + '/' + seriesUID[0] + '.nrrd')
 
         self._dicoms.append(image)
-        print(image)
+
+    def writeNrrdToSortedFolder(self, path):
+        if self.getCOPDStatus() is True:
+            itk.imwrite(self._dicoms[0], path + '/COPD/' + str(self._number) + '.nrrd')
+        else:
+            itk.imwrite(self._dicoms[0], path + '/NCOPD/' + str(self._number) + '.nrrd')

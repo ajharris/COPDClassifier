@@ -99,14 +99,11 @@ if __name__ == '__main__':
     for patient in patients:
         patient.addDestinationFolder(dataPath)
         patient.loadSingleDicomFromSource()
-        # patient.loadPatient()
-        # patient.copyCompleteFolderStructureAll(dataPath)
-        # patient.getDicomImages()
         patient.storePatient()
         updateSpacing(patient)
+        patient.writeNrrdToSortedFolder(dataPath)
 
-    print("Unique scan spacings (cm): ")
-    for set in spacing:
-        print(set)
+
+
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 
